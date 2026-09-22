@@ -78,7 +78,7 @@ def get_crypto_price(symbol_key):
 
 st.title("🚀 CryptoAI Signal Pro (Web / Mobile 版)")
 
-# --- 【最上部コントロールパネル】スマホでも即座に操作可能 ---
+# --- 【最上部コントロールパネル】設定＆銘柄選択 ---
 with st.container():
     st.markdown("### ⚙️ 設定 & 銘柄コントロールパネル")
     ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1.2, 1, 1.5])
@@ -113,31 +113,13 @@ with st.container():
         else:
             pred_steps = pred_number
 
-    # AI分析＆確率予測ボタンを配置
     if st.button("⚡ AI分析＆確率予測を実行", use_container_width=True):
         st.success(f"{selected_symbol} のAI分析（期間: {timeframe_str}）を実行しました！")
 
 st.markdown("---")
 
 current_price = get_crypto_price(selected_symbol)
-
-# トップのステータスヘッダー表示
-top_col1, top_col2, top_col3, top_col4 = st.columns(4)
-with top_col1:
-    st.markdown("### 判定 (買い時/売り時)")
-    st.success("🟢 買い時")
-with top_col2:
-    st.markdown("### 超高精度通常予測 達成確率")
-    st.markdown("### **62.35 %**")
-with top_col3:
-    st.markdown("### Binance JPレート → 通常ターゲット")
-    target_price_val = current_price * 1.08
-    st.markdown(f"### ￥{current_price:,.2f} → ￥{target_price_val:,.2f} (+8.00%)")
-with top_col4:
-    st.markdown("### 設定した予測期間")
-    st.markdown(f"### **{timeframe_str}**")
-
-st.markdown("---")
+target_price_val = current_price * 1.08
 
 # メインタブ
 tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
@@ -150,18 +132,22 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 # 価格フォーマット
 if current_price < 1:
     price_str = f"￥{current_price:.6f}"
+    target_str = f"￥{target_price_val:.6f}"
 elif current_price < 1000:
     price_str = f"￥{current_price:,.2f}"
+    target_str = f"￥{target_price_val:,.2f}"
 else:
     price_str = f"￥{current_price:,.0f}"
+    target_str = f"￥{target_price_val:,.0f}"
 
-# 1. シグナル＆チャートタブ
+# 1. 総合シグナル＆チャートタブ (ご要望に合わせ、先に予測グラフを見せる構成)
 with tab_trade:
-    col_chart, col_info = st.columns([1, 1], gap="large")
+    # --- ① まず予測グラフ（チャート）を最上部に配置 ---
+    st.subheader(f"📈 {selected_symbol} 予測・チャート分析 ({timeframe_tf})")
+    
+    col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
-        st.subheader(f"{selected_symbol} - [{timeframe_tf}] Binance Japan")
-        
         fig = make_subplots(
             rows=3, cols=1, 
             shared_xaxes=True, 
@@ -221,7 +207,7 @@ with tab_trade:
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff'),
-            height=500,
+            height=480,
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
@@ -250,13 +236,30 @@ with tab_trade:
         st.markdown("""
         **1. テクニカル分析:**  
         RSI(14)は69.66を示しており、強い買越しモメンタムが継続しています。5日移動平均線(5MA)が20日移動平均線(20MA)を上抜けるゴールデンクロスが確定しており、短期的な上昇トレンドの初動段階にあると判断できます。
-
-        **2. オンチェーンおよび構造分析:**  
-        流動性の95%がロック済みであり、上位10社の大口保有比率が20%未満と高度に分散されています。これにより、ラグプルや特定の大口投資家（クジラ）による突発的な売り圧力を大幅に抑制できる健全な市場構造が維持されています。
-
-        **3. 総合評価および売買戦略:**  
-        非常に堅固なオンチェーン基盤と短期テクニカルの強気シグナルが合致しており、「買い時」のシグナルを発出します。利確目標(TP)を達成しつつ、リスク・リワード比約2.5の優位性の高いトレード設計が可能です。
         """)
+
+    st.markdown("---")
+
+    # --- ② グラフの下に配置する「AI判定・ステータス表示（2段レイアウト）」 ---
+    st.markdown("### 🤖 AI分析判定・ターゲットステータス")
+    
+    # 1段目
+    stat_row1_col1, stat_row1_col2 = st.columns([1, 2])
+    with stat_row1_col1:
+        st.markdown("**判定 (買い時/売り時)**")
+        st.success("🟢 買い時")
+    with stat_row1_col2:
+        st.markdown("**超高精度通常予測 達成確率**")
+        st.markdown("### **62.35 %**")
+
+    # 2段目
+    stat_row2_col1, stat_row2_col2 = st.columns([2, 1])
+    with stat_row2_col1:
+        st.markdown("**Binance JPレート → 通常ターゲット**")
+        st.markdown(f"### `{price_str} → {target_str} (+8.00%)`")
+    with stat_row2_col2:
+        st.markdown("**設定した予測期間**")
+        st.markdown(f"### `{timeframe_str}`")
 
 # 2. ポートフォリオタブ
 with tab_portfolio:
