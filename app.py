@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# 黒背景に対してすべての文字を白色にする包括的なCSS
+# セレクトボックスやポップアップを含めて完璧にダークテーマに統一するCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -120,7 +120,7 @@ with st.container():
         with sub_col2:
             pred_unit = st.selectbox("単位", ["時間", "日", "週", "月", "年"], label_visibility="collapsed")
         
-        # 重複のない自然な文字列に修正
+        # 「間」の重複を防いだ自然な文字列
         timeframe_str = f"{pred_number}{pred_unit}"
         
         if pred_unit == "時間":
@@ -261,12 +261,7 @@ with tab_trade:
 
         st.markdown("---")
 
-        # --- CEX上場可能性・3シナリオ予測・ファンダメンタルズ ---
-        st.markdown("### 🔵 CEX上場可能性: 大手CEX上場確率 [91.85%]")
-        st.markdown("### 🚀 想定値上がり倍率: [2.15倍]")
-        st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
-        st.info("マルチファクター分析および上場準拠に基づく超高精度判定")
-        
+        # --- ✨ 画像2のブロック（超高精度3シナリオ価格＆確率予測）を上に配置 ---
         st.markdown(f"### 📊 超高精度3シナリオ価格＆確率予測（期間: {timeframe_str}）")
         weak_val = current_price * 0.90
         normal_val = current_price * 1.08
@@ -281,6 +276,13 @@ with tab_trade:
         st.markdown(f"- 🛑 **損切(SL)**: ￥{sl_val:,.2f}")
 
         st.markdown("---")
+
+        # --- ✨ 画像1のブロック（CEX上場可能性・ファンダメンタルズ）を下に配置 ---
+        st.markdown("### 🔵 CEX上場可能性: 大手CEX上場確率 [91.85%]")
+        st.markdown("### 🚀 想定値上がり倍率: [2.15倍]")
+        st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
+        st.info("マルチファクター分析および上場準拠に基づく超高精度判定")
+
         st.markdown("""
         **1. テクニカル分析:**  
         RSI(14)は69.66を示しており、強い買越しモメンタムが継続しています。5日移動平均線(5MA)が20日移動平均線(20MA)を上抜けるゴールデンクロスが確定しており、短期的な上昇トレンドの初動段階にあると判断できます。
