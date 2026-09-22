@@ -148,7 +148,6 @@ with tab_trade:
     with col_chart:
         st.subheader(f"{selected_symbol} - [{timeframe_tf}] Binance Japan")
         
-        # プロ仕様のサブチャート付きレイアウト（上：ローソク足、中：出来高、下：RSI）
         fig = make_subplots(
             rows=3, cols=1, 
             shared_xaxes=True, 
@@ -163,16 +162,13 @@ with tab_trade:
         highs = np.maximum(opens, closes) + np.abs(np.random.randn(60) * (current_price * 0.005))
         lows = np.minimum(opens, closes) - np.abs(np.random.randn(60) * (current_price * 0.005))
         
-        # 移動平均線 (5-MA, 20-MA)
         ma5 = pd.Series(closes).rolling(5).mean()
         ma20 = pd.Series(closes).rolling(20).mean()
         
-        # ボリンジャーバンド
         std20 = pd.Series(closes).rolling(20).std()
         upper_bb = ma20 + (std20 * 2)
         lower_bb = ma20 - (std20 * 2)
 
-        # メインチャート（ローソク足 or 折れ線）
         if chart_type == "ローソク足":
             fig.add_trace(go.Candlestick(
                 x=dates, open=opens, high=highs, low=lows, close=closes,
@@ -183,15 +179,12 @@ with tab_trade:
                 x=dates, y=closes, mode='lines', name='折れ線(終値)', line=dict(color='#26a69a', width=2)
             ), row=1, col=1)
 
-        # MA・ボリンジャーバンド・予測線
         fig.add_trace(go.Scatter(x=dates, y=ma5, mode='lines', name='5-MA', line=dict(color='#ffeb3b', width=1)), row=1, col=1)
         fig.add_trace(go.Scatter(x=dates, y=ma20, mode='lines', name='20-MA', line=dict(color='#ab47bc', width=1)), row=1, col=1)
         
-        # ボリンジャーバンドのエリア
         fig.add_trace(go.Scatter(x=dates, y=upper_bb, mode='lines', name='ボリンジャー上限', line=dict(color='rgba(150,150,150,0.2)'), showlegend=False), row=1, col=1)
-        fig.add_trace(go.Scatter(x=dates, y=lower_bb, mode='lines', name='ボリンジャー下限', fill='tonexty', fillcolor='rgba(100,100,100,0.1)', line=dict(color='rgba(150,150,150,0.2)'), name='ボリンジャー'), row=1, col=1)
+        fig.add_trace(go.Scatter(x=dates, y=lower_bb, mode='lines', name='ボリンジャー下限', fill='tonexty', fillcolor='rgba(100,100,100,0.1)', line=dict(color='rgba(150,150,150,0.2)'), showlegend=False), row=1, col=1)
 
-        # 3シナリオ予測線（弱気・通常・強気）
         pred_dates = pd.date_range(start=dates[-1], periods=6, freq='D')
         weak_pred = [closes[-1]] + [closes[-1] * (1 - i * 0.02) for i in range(1, 6)]
         normal_pred = [closes[-1]] + [closes[-1] * (1 + i * 0.025) for i in range(1, 6)]
@@ -201,12 +194,10 @@ with tab_trade:
         fig.add_trace(go.Scatter(x=pred_dates, y=normal_pred, mode='lines+markers', name='通常予測', line=dict(color='#ffeb3b', width=2, dash='dash')), row=1, col=1)
         fig.add_trace(go.Scatter(x=pred_dates, y=strong_pred, mode='lines+markers', name='強気予測', line=dict(color='#26a69a', width=2, dash='dash')), row=1, col=1)
 
-        # 2段目：出来高
         volumes = np.random.randint(10, 100, size=60)
         colors = ['#26a69a' if closes[i] >= opens[i] else '#ef5350' for i in range(60)]
         fig.add_trace(go.Bar(x=dates, y=volumes, marker_color=colors, name='出来高', showlegend=False), row=2, col=1)
 
-        # 3段目：RSI
         rsi_vals = 50 + np.sin(np.linspace(0, 10, 60)) * 25
         fig.add_trace(go.Scatter(x=dates, y=rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#ab47bc', width=1.5), showlegend=False), row=3, col=1)
         fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=3, col=1)
