@@ -35,7 +35,18 @@ with st.sidebar:
     timeframe = st.selectbox("予測期間", ["1時間以内", "3日以内", "1週間以内", "1ヶ月以内"])
     
     if st.button("⚡ AI分析＆確率予測を実行", use_container_width=True):
-        st.success("AI分析を実行しました！")
+        st.success(f"{selected_symbol} のAI分析を実行しました！")
+
+# 選択された銘柄に応じた動的データの切り替えロジック
+base_prices = {
+    "BTC/JPY": 10275000,
+    "ETH/JPY": 425000,
+    "SOL/JPY": 21500,
+    "TAO/JPY": 85000,
+    "SUI/JPY": 340,
+    "PEPE/JPY": 0.0025
+}
+current_base = base_prices.get(selected_symbol, 10000000)
 
 # メインタブ
 tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
@@ -49,13 +60,16 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 with tab_trade:
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("判定", "買い時", "+67.43%")
-    col2.metric("現在価格", "￥10,275,000", "+2.4%")
+    col2.metric("現在価格", f"￥{current_base:,.2f}" if current_base < 1 else f"￥{current_base:,}", "+2.4%")
     col3.metric("RSI(14)", "52.4", "中立")
     col4.metric("CEX上場確率", "89.42%", "高ポテンシャル")
     
-    st.subheader(f"📈 {selected_symbol} チャート・予測")
+    st.subheader(f"📈 {selected_symbol} チャート・予測 ({timeframe})")
+    
+    # 選択された銘柄のベース価格に合わせたダミーチャート生成
+    np.random.seed(len(selected_symbol)) # 銘柄ごとに異なるチャート形状にする
     chart_data = pd.DataFrame(
-        np.random.randn(30, 2) * 100000 + 10275000,
+        np.random.randn(30, 2) * (current_base * 0.01) + current_base,
         columns=['価格(終値)', '移動平均(20MA)']
     )
     st.line_chart(chart_data)
@@ -67,6 +81,7 @@ with tab_portfolio:
     df_pf = pd.DataFrame([
         {"銘柄": "BTC/JPY", "保有数": 0.15, "取得単価": 9800000, "カスタムSL": 9200000},
         {"銘柄": "ETH/JPY", "保有数": 1.20, "取得単価": 420000, "カスタムSL": 390000},
+        {"銘柄": selected_symbol, "保有数": 10.0, "取得単価": current_base * 0.95, "カスタムSL": current_base * 0.90},
     ])
     
     edited_df = st.data_editor(df_pf, num_rows="dynamic", use_container_width=True)
@@ -89,14 +104,14 @@ with tab_strategy:
     
     chat_container = st.container(height=400)
     with chat_container:
-        st.markdown("📌 **システムメモ**: 全タブの情報（銘柄・ポートフォリオ・経済指標）をAIが自動共有しています。")
+        st.markdown(f"📌 **システムメモ**: 現在選択中の `{selected_symbol}` の情報・ポートフォリオ・経済指標をAIが自動共有しています。")
         st.markdown("📊 **主席アナリストAI (マクロ)**: 指標発表前後のボラティリティに警戒が必要です。")
-        st.markdown("📈 **テクニカルAI**: 現在のRSIと移動平均の状態を注視しましょう。")
+        st.markdown(f"📈 **テクニカルAI**: {selected_symbol} の現在のRSIと移動平均の状態を注視しましょう。")
         st.markdown("🛡️ **リスク管理官AI**: ポートフォリオ全体の損切ラインを再確認してください。")
         st.markdown("👑 **チーフオーケストレーター**: 指標発表を控え、ポジションを抑えた慎重な立ち回りを推奨します。")
 
-    user_query = st.chat_input("AI戦略会議室へメッセージを入力 (例: 現在のポートフォリオとCPIに向けた方針は？)")
+    user_query = st.chat_input(f"AI戦略会議室へメッセージを入力 (例: {selected_symbol} の今後の見通しとCPIに向けた方針は？)")
     if user_query:
         with chat_container:
             st.markdown(f"👤 **あなた**: {user_query}")
-            st.markdown("👑 **チーフオーケストレーター (総括)**: ご質問ありがとうございます。現在のポートフォリオとマクロ環境を踏まえると...")
+            st.markdown(f"👑 **チーフオーケストレーター (総括)**: ご質問ありがとうございます。{selected_symbol} の値動きとマクロ環境を踏まえると...")
