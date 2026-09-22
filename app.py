@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# 黒背景に対してすべての文字を白色にする包括的なCSS
+# ドロップダウンの中身も含めて文字色・背景色を最適化したCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -29,6 +29,13 @@ st.markdown("""
         background-color: #21262d !important;
         color: #ffffff !important;
         border-color: #30363d !important;
+    }
+    
+    /* ドロップダウンのポップアップメニュー内の文字色を黒（見やすさ重視）に設定 */
+    div[data-baseweb="popover"] div[role="option"] div, 
+    div[data-baseweb="menu"] div, 
+    ul[data-baseweb="menu"] li span {
+        color: #24292e !important;
     }
     
     .stButton button {
@@ -94,7 +101,6 @@ with st.container():
         )
     with ctrl_col2:
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
-        # ご要望の時間足の選択肢にアップデート
         timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "日", "週", "月", "年"])
         
     with ctrl_col3:
