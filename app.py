@@ -81,7 +81,7 @@ st.title("🚀 CryptoAI Signal Pro (Web / Mobile 版)")
 # --- 【最上部コントロールパネル】スマホでも即座に操作可能 ---
 with st.container():
     st.markdown("### ⚙️ 設定 & 銘柄コントロールパネル")
-    ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([1.2, 1, 1, 1])
+    ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1.2, 1, 1.2])
     
     with ctrl_col1:
         selected_symbol = st.selectbox(
@@ -90,21 +90,29 @@ with st.container():
         )
     with ctrl_col2:
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
-    with ctrl_col3:
         timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
-    with ctrl_col4:
-        timeframe_option = st.selectbox(
-            "予測期間",
-            ["3日以内", "1時間以内", "1週間以内", "1ヶ月以内", "自由入力"]
-        )
-
-    if timeframe_option == "自由入力":
-        custom_days = st.number_input("予測日数（日）", min_value=1, max_value=365, value=3)
-        timeframe_str = f"{custom_days}日間"
-        pred_steps = custom_days
-    else:
-        timeframe_str = timeframe_option
-        pred_steps = 3
+        
+    with ctrl_col3:
+        st.markdown("**予測期間の設定**")
+        sub_col1, sub_col2 = st.columns([1, 1])
+        with sub_col1:
+            pred_number = st.number_input("数値", min_value=1, max_value=365, value=3, label_visibility="collapsed")
+        with sub_col2:
+            pred_unit = st.selectbox("単位", ["時間", "日", "週", "月", "年"], label_visibility="collapsed")
+        
+        timeframe_str = f"{pred_number}{pred_unit}間"
+        
+        # 予測ステップの計算用
+        if pred_unit == "時間":
+            pred_steps = max(1, pred_number // 4)
+        elif pred_unit == "週":
+            pred_steps = pred_number * 7
+        elif pred_unit == "月":
+            pred_steps = pred_number * 30
+        elif pred_unit == "年":
+            pred_steps = pred_number * 365
+        else:
+            pred_steps = pred_number
 
 st.markdown("---")
 
@@ -222,7 +230,7 @@ with tab_trade:
         st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
         st.info("マルチファクター分析および上場準拠に基づく超高精度判定")
         
-        st.markdown("### 📊 超高精度3シナリオ価格＆確率予測（マルチファクター演算）")
+        st.markdown(f"### 📊 超高精度3シナリオ価格＆確率予測（期間: {timeframe_str}）")
         weak_val = current_price * 0.90
         normal_val = current_price * 1.08
         strong_val = current_price * 1.18
@@ -273,7 +281,7 @@ with tab_strategy:
     st.subheader("💬 戦略会議室 (マルチAI対話)")
     chat_container = st.container(height=400)
     with chat_container:
-        st.markdown(f"📌 **システムメモ**: 現在選択中の `{selected_symbol}`（現在価格: {price_str}）の情報をAIがリアルタイムで共有しています。")
+        st.markdown(f"📌 **システムメモ**: 現在選択中の `{selected_symbol}`（予測期間: {timeframe_str}）の情報をAIがリアルタイムで共有しています。")
         st.markdown("📊 **主席アナリストAI (マクロ)**: 指標発表前後のボラティリティに警戒が必要です。")
         st.markdown(f"📈 **テクニカルAI**: {selected_symbol} の現在のローソク足形状とRSIの状態を注視しましょう。")
         st.markdown("🛡️ **リスク管理官AI**: ポートフォリオ全体の損切ラインを再確認してください。")
