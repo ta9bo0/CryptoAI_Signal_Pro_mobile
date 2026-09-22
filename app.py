@@ -11,13 +11,26 @@ st.set_page_config(
     layout="wide"
 )
 
-# ダークテーマ＆サイドバーの文字色を改善したCSS
+# ダークテーマ＆ボタンの視認性を改善したCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
+    
+    /* ボタンのスタイル調整（文字が見やすくなるように修正） */
+    [data-testid="stSidebar"] .stButton button {
+        background-color: #f0f6fc;
+        color: #24292e;
+        font-weight: 600;
+        border: none;
+    }
+    [data-testid="stSidebar"] .stButton button:hover {
+        background-color: #58a6ff;
+        color: #ffffff;
+    }
+
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #8b949e; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
@@ -101,7 +114,6 @@ with tab_trade:
     
     st.subheader(f"📈 {selected_symbol} ローソク足チャート ＆ AI予測線 ({timeframe})")
     
-    # リアルタイム価格をベースにした本格的なローソク足データの生成
     np.random.seed(len(selected_symbol) + int(current_price))
     dates = pd.date_range(end=pd.Timestamp.now(), periods=30, freq='D')
     
