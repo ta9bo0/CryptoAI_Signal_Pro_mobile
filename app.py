@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# セレクトボックスのポップアップ部分も含めて完全にダークカラーに固定するCSS
+# 黒背景に対してすべての文字を白色にする包括的なCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -239,6 +239,28 @@ with tab_trade:
         st.plotly_chart(fig, use_container_width=True)
 
     with col_info:
+        # --- ✨ 画像1のブロック（AI分析判定・ターゲットステータス）を上部に移動 ---
+        st.markdown("### 🤖 AI分析判定・ターゲットステータス")
+        
+        stat_row1_col1, stat_row1_col2 = st.columns([1, 2])
+        with stat_row1_col1:
+            st.markdown("**判定 (買い時/売り時)**")
+            st.success("🟢 買い時")
+        with stat_row1_col2:
+            st.markdown("**超高精度通常予測 達成確率**")
+            st.markdown("### **62.35 %**")
+
+        stat_row2_col1, stat_row2_col2 = st.columns([2, 1])
+        with stat_row2_col1:
+            st.markdown("**Binance JPレート → 通常ターゲット**")
+            st.markdown(f"### `{price_str} → {target_str} (+8.00%)`")
+        with stat_row2_col2:
+            st.markdown("**設定した予測期間**")
+            st.markdown(f"### `{timeframe_str}`")
+
+        st.markdown("---")
+
+        # --- ✨ 画像2のブロック（CEX上場可能性・3シナリオ予測・ファンダメンタルズ）を下部に移動 ---
         st.markdown("### 🔵 CEX上場可能性: 大手CEX上場確率 [91.85%]")
         st.markdown("### 🚀 想定値上がり倍率: [2.15倍]")
         st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
@@ -262,29 +284,6 @@ with tab_trade:
         **1. テクニカル分析:**  
         RSI(14)は69.66を示しており、強い買越しモメンタムが継続しています。5日移動平均線(5MA)が20日移動平均線(20MA)を上抜けるゴールデンクロスが確定しており、短期的な上昇トレンドの初動段階にあると判断できます。
         """)
-
-    st.markdown("---")
-
-    # --- ✨ チャートの下に配置された「AI分析判定・ターゲットステータス」 ---
-    st.markdown("### 🤖 AI分析判定・ターゲットステータス")
-    
-    # 1段目
-    stat_row1_col1, stat_row1_col2 = st.columns([1, 2])
-    with stat_row1_col1:
-        st.markdown("**判定 (買い時/売り時)**")
-        st.success("🟢 買い時")
-    with stat_row1_col2:
-        st.markdown("**超高精度通常予測 達成確率**")
-        st.markdown("### **62.35 %**")
-
-    # 2段目
-    stat_row2_col1, stat_row2_col2 = st.columns([2, 1])
-    with stat_row2_col1:
-        st.markdown("**Binance JPレート → 通常ターゲット**")
-        st.markdown(f"### `{price_str} → {target_str} (+8.00%)`")
-    with stat_row2_col2:
-        st.markdown("**設定した予測期間**")
-        st.markdown(f"### `{timeframe_str}`")
 
 # 2. ポートフォリオタブ
 with tab_portfolio:
