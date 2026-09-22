@@ -120,7 +120,8 @@ with st.container():
         with sub_col2:
             pred_unit = st.selectbox("単位", ["時間", "日", "週", "月", "年"], label_visibility="collapsed")
         
-        timeframe_str = f"{pred_number}{pred_unit}間"
+        # 重複のない自然な文字列に修正
+        timeframe_str = f"{pred_number}{pred_unit}"
         
         if pred_unit == "時間":
             pred_steps = max(1, pred_number // 4)
@@ -239,7 +240,7 @@ with tab_trade:
         st.plotly_chart(fig, use_container_width=True)
 
     with col_info:
-        # --- ✨ 画像1のブロック（AI分析判定・ターゲットステータス）を上部に移動 ---
+        # --- AI分析判定・ターゲットステータス ---
         st.markdown("### 🤖 AI分析判定・ターゲットステータス")
         
         stat_row1_col1, stat_row1_col2 = st.columns([1, 2])
@@ -260,7 +261,7 @@ with tab_trade:
 
         st.markdown("---")
 
-        # --- ✨ 画像2のブロック（CEX上場可能性・3シナリオ予測・ファンダメンタルズ）を下部に移動 ---
+        # --- CEX上場可能性・3シナリオ予測・ファンダメンタルズ ---
         st.markdown("### 🔵 CEX上場可能性: 大手CEX上場確率 [91.85%]")
         st.markdown("### 🚀 想定値上がり倍率: [2.15倍]")
         st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
