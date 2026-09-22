@@ -4,19 +4,20 @@ import numpy as np
 import requests
 import plotly.graph_objects as go
 
-# ページ設定（スマホ対応のレスポンシブ・ダークテーマベース）
+# ページ設定
 st.set_page_config(
     page_title="CryptoAI Signal Pro",
     page_icon="📈",
     layout="wide"
 )
 
-# デスクトップ版と同等の重厚な黒基調（ダークテーマ）CSS
+# ダークテーマ＆サイドバーの文字色を改善したCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
+    [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #8b949e; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
@@ -104,20 +105,16 @@ with tab_trade:
     np.random.seed(len(selected_symbol) + int(current_price))
     dates = pd.date_range(end=pd.Timestamp.now(), periods=30, freq='D')
     
-    # ダミーのOHLC（始値・高値・安値・終値）を構築
     closes = current_price + np.cumsum(np.random.randn(30) * (current_price * 0.01))
     opens = closes + np.random.randn(30) * (current_price * 0.003)
     highs = np.maximum(opens, closes) + np.abs(np.random.randn(30) * (current_price * 0.005))
     lows = np.minimum(opens, closes) - np.abs(np.random.randn(30) * (current_price * 0.005))
     
-    # AI予測線（未来のトレンド予測ライン）のデータ作成
     pred_dates = pd.date_range(start=dates[-1], periods=6, freq='D')
     pred_prices = [closes[-1]] + [closes[-1] * (1 + i * 0.015) for i in range(1, 6)]
 
-    # Plotlyを使ったリッチな黒基調チャート（ローソク足 ＋ 予測線）
     fig = go.Figure()
 
-    # ローソク足の追加
     fig.add_trace(go.Candlestick(
         x=dates,
         open=opens,
@@ -129,7 +126,6 @@ with tab_trade:
         decreasing_line_color='#ef5350'
     ))
 
-    # AI予測線の追加（点線で表示）
     fig.add_trace(go.Scatter(
         x=pred_dates,
         y=pred_prices,
@@ -138,7 +134,6 @@ with tab_trade:
         line=dict(color='#58a6ff', width=3, dash='dash')
     ))
 
-    # チャートのレイアウト調整（ダークテーマ最適化）
     fig.update_layout(
         paper_bgcolor='#0e1117',
         plot_bgcolor='#0e1117',
@@ -175,7 +170,7 @@ with tab_macro:
     - **10/14(水) 21:30**: 🇺🇸 米・消費者物価指数 CPI (コンセンサス: 3.1%)
     """)
 
-# 4. 戦略会議室タブ (4者合同AI)
+# 4. 戦略会議室タブ
 with tab_strategy:
     st.subheader("💬 戦略会議室 (4者合同AI対話)")
     
