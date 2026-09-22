@@ -94,7 +94,8 @@ with st.container():
         )
     with ctrl_col2:
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
-        timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
+        # ご要望の時間足の選択肢にアップデート
+        timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "日", "週", "月", "年"])
         
     with ctrl_col3:
         st.markdown("**予測期間の設定**")
@@ -146,7 +147,7 @@ else:
 
 # 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    st.subheader(f"📈 {selected_symbol} 予測・チャート分析 ({timeframe_tf})")
+    st.subheader(f"📈 {selected_symbol} 予測・チャート分析 [{timeframe_tf}]")
     
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
@@ -206,7 +207,6 @@ with tab_trade:
         fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=3, col=1)
         fig.add_hline(y=30, line_dash="dash", line_color="#26a69a", row=3, col=1)
 
-        # 凡例をチャート下部にすっきりと配置（スマホでの操作性改善）
         fig.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
@@ -250,7 +250,7 @@ with tab_trade:
 
     st.markdown("---")
 
-    # --- ✨ チャートの下に配置された「AI分析判定・ステータス表示（2段レイアウト）」 ---
+    # --- ✨ チャートの下に配置された「AI分析判定・ターゲットステータス」 ---
     st.markdown("### 🤖 AI分析判定・ターゲットステータス")
     
     # 1段目
