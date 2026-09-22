@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# デスクトップ＆モバイル対応のダークテーマCSS
+# ダークテーマ＆スマホ最適化CSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -20,20 +20,20 @@ st.markdown("""
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
     
-    [data-testid="stSidebar"] input, [data-testid="stSidebar"] select, [data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    input, select, div[data-baseweb="select"] > div {
         background-color: #21262d !important;
         color: #ffffff !important;
         border-color: #30363d !important;
     }
-    [data-testid="stSidebar"] span { color: #ffffff !important; }
+    span { color: #ffffff !important; }
 
-    [data-testid="stSidebar"] .stButton button {
+    .stButton button {
         background-color: #21262d;
         color: #ffffff;
         font-weight: 600;
         border: 1px solid #30363d;
     }
-    [data-testid="stSidebar"] .stButton button:hover {
+    .stButton button:hover {
         background-color: #1f6feb;
         color: #ffffff;
         border-color: #1f6feb;
@@ -76,25 +76,29 @@ def get_crypto_price(symbol_key):
         }
         return fallback_prices.get(symbol_key, 1000000.0)
 
-# サイドバー設定
-with st.sidebar:
-    st.header("⚙️ 設定 & 銘柄選択")
-    api_key = st.text_input("Gemini APIキー (任意)", type="password")
+st.title("🚀 CryptoAI Signal Pro (Web / Mobile 版)")
+
+# --- 【最上部コントロールパネル】スマホでも即座に操作可能 ---
+with st.container():
+    st.markdown("### ⚙️ 設定 & 銘柄コントロールパネル")
+    ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([1.2, 1, 1, 1])
     
-    selected_symbol = st.selectbox(
-        "銘柄選択",
-        ["TAO/JPY", "BTC/JPY", "ETH/JPY", "SOL/JPY", "SUI/JPY", "PEPE/JPY"]
-    )
-    
-    chart_type = st.radio("チャート表示形式", ["ローソク足", "折れ線"], horizontal=True)
-    timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
-    
-    timeframe_option = st.selectbox(
-        "予測期間",
-        ["3日以内", "1時間以内", "1週間以内", "1ヶ月以内", "自由入力（カスタム）"]
-    )
-    
-    if timeframe_option == "自由入力（カスタム）":
+    with ctrl_col1:
+        selected_symbol = st.selectbox(
+            "銘柄選択",
+            ["TAO/JPY", "BTC/JPY", "ETH/JPY", "SOL/JPY", "SUI/JPY", "PEPE/JPY"]
+        )
+    with ctrl_col2:
+        chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
+    with ctrl_col3:
+        timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
+    with ctrl_col4:
+        timeframe_option = st.selectbox(
+            "予測期間",
+            ["3日以内", "1時間以内", "1週間以内", "1ヶ月以内", "自由入力"]
+        )
+
+    if timeframe_option == "自由入力":
         custom_days = st.number_input("予測日数（日）", min_value=1, max_value=365, value=3)
         timeframe_str = f"{custom_days}日間"
         pred_steps = custom_days
@@ -102,8 +106,7 @@ with st.sidebar:
         timeframe_str = timeframe_option
         pred_steps = 3
 
-    if st.button("⚡ AI分析＆確率予測を実行", use_container_width=True):
-        st.success(f"{selected_symbol} のAI分析を実行しました！")
+st.markdown("---")
 
 current_price = get_crypto_price(selected_symbol)
 
@@ -143,7 +146,6 @@ else:
 
 # 1. シグナル＆チャートタブ
 with tab_trade:
-    # スマホでは縦並び、PCでは横並びに自動切り替えするカラム設定
     col_chart, col_info = st.columns([1, 1], gap="large")
     
     with col_chart:
