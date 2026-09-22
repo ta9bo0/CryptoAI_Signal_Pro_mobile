@@ -12,11 +12,16 @@ st.set_page_config(
     layout="wide"
 )
 
-# ダークテーマ＆スマホ最適化CSS
+# 黒背景に対してすべての文字を白色にする包括的なCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
+    
+    h1, h2, h3, h4, h5, h6, p, span, label, div, markdown {
+        color: #ffffff !important;
+    }
+    
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
     
@@ -25,8 +30,7 @@ st.markdown("""
         color: #ffffff !important;
         border-color: #30363d !important;
     }
-    span { color: #ffffff !important; }
-
+    
     .stButton button {
         background-color: #21262d;
         color: #ffffff;
@@ -40,7 +44,7 @@ st.markdown("""
     }
 
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
-    .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #8b949e; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
+    .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #ffffff !important; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
     div[data-testid="stMetricValue"] { color: #58a6ff; font-weight: 700; }
 </style>
@@ -140,9 +144,8 @@ else:
     price_str = f"￥{current_price:,.0f}"
     target_str = f"￥{target_price_val:,.0f}"
 
-# 1. 総合シグナル＆チャートタブ (ご要望に合わせ、先に予測グラフを見せる構成)
+# 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    # --- ① まず予測グラフ（チャート）を最上部に配置 ---
     st.subheader(f"📈 {selected_symbol} 予測・チャート分析 ({timeframe_tf})")
     
     col_chart, col_info = st.columns([1.3, 1], gap="large")
@@ -203,13 +206,20 @@ with tab_trade:
         fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=3, col=1)
         fig.add_hline(y=30, line_dash="dash", line_color="#26a69a", row=3, col=1)
 
+        # 凡例をチャート下部にすっきりと配置（スマホでの操作性改善）
         fig.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff'),
-            height=480,
-            margin=dict(l=10, r=10, t=10, b=10),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            height=520,
+            margin=dict(l=10, r=10, t=10, b=40),
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=-0.15,
+                xanchor="center",
+                x=0.5
+            )
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -240,7 +250,7 @@ with tab_trade:
 
     st.markdown("---")
 
-    # --- ② グラフの下に配置する「AI判定・ステータス表示（2段レイアウト）」 ---
+    # --- ✨ チャートの下に配置された「AI分析判定・ステータス表示（2段レイアウト）」 ---
     st.markdown("### 🤖 AI分析判定・ターゲットステータス")
     
     # 1段目
