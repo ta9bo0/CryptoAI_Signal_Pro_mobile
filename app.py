@@ -81,7 +81,7 @@ st.title("🚀 CryptoAI Signal Pro (Web / Mobile 版)")
 # --- 【最上部コントロールパネル】スマホでも即座に操作可能 ---
 with st.container():
     st.markdown("### ⚙️ 設定 & 銘柄コントロールパネル")
-    ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1.2, 1, 1.2])
+    ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1.2, 1, 1.5])
     
     with ctrl_col1:
         selected_symbol = st.selectbox(
@@ -102,7 +102,6 @@ with st.container():
         
         timeframe_str = f"{pred_number}{pred_unit}間"
         
-        # 予測ステップの計算用
         if pred_unit == "時間":
             pred_steps = max(1, pred_number // 4)
         elif pred_unit == "週":
@@ -113,6 +112,10 @@ with st.container():
             pred_steps = pred_number * 365
         else:
             pred_steps = pred_number
+
+    # AI分析＆確率予測ボタンを配置
+    if st.button("⚡ AI分析＆確率予測を実行", use_container_width=True):
+        st.success(f"{selected_symbol} のAI分析（期間: {timeframe_str}）を実行しました！")
 
 st.markdown("---")
 
