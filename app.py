@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# ドロップダウンメニューの背景と文字色を完璧にダークテーマに統一するCSS
+# セレクトボックスのポップアップ部分も含めて完全にダークカラーに固定するCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -31,17 +31,20 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    /* ドロップダウンのポップアップ（選択肢一覧）の背景を黒、文字を白に固定 */
-    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
+    /* ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定） */
+    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #21262d !important;
     }
-    div[data-baseweb="popover"] div[role="option"] div, 
-    div[data-baseweb="menu"] div, 
-    ul[data-baseweb="menu"] li span {
+    div[data-baseweb="popover"] div, div[data-baseweb="menu"] div, ul[data-baseweb="menu"] li, span {
         color: #ffffff !important;
     }
-    div[data-baseweb="popover"] div[role="option"]:hover {
+    li[role="option"] {
+        background-color: #21262d !important;
+        color: #ffffff !important;
+    }
+    li[role="option"]:hover {
         background-color: #1f6feb !important;
+        color: #ffffff !important;
     }
     
     .stButton button {
@@ -107,7 +110,6 @@ with st.container():
         )
     with ctrl_col2:
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
-        # ご要望の時間足の選択肢
         timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "日", "週", "月", "年"])
         
     with ctrl_col3:
