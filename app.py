@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# セレクトボックスやポップアップを含めて完璧にダークテーマに統一するCSS
+# トレードビュー風のボタンスタイルおよびダークテーマCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -31,7 +31,7 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    # ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定）
+    /* ドロップダウンポップアップの背景と文字色 */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #21262d !important;
     }
@@ -66,7 +66,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 無料API（CoinGecko）からリアルタイムの日本円価格を取得する関数
+# リアルタイム価格取得関数（CoinGecko）
 @st.cache_data(ttl=60)
 def get_crypto_price(symbol_key):
     coin_ids = {
@@ -109,8 +109,9 @@ with st.container():
             ["TAO/JPY", "BTC/JPY", "ETH/JPY", "SOL/JPY", "SUI/JPY", "PEPE/JPY"]
         )
     with ctrl_col2:
+        # 画像3のスタイルに合わせたセレクト
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
-        timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "日", "週", "月", "年"])
+        timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
         
     with ctrl_col3:
         st.markdown("**予測期間の設定**")
@@ -167,7 +168,7 @@ with tab_trade:
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
-        # RSIサブチャートを削除し、ローソク足/折れ線（行1）と出来高（行2）の2段構成に変更
+        # 画像1および画像2のご要望通り、「メインチャート（ローソク足/折れ線）」と「RSIサブチャート」の2つに厳選
         fig = make_subplots(
             rows=2, cols=1, 
             shared_xaxes=True, 
@@ -189,6 +190,7 @@ with tab_trade:
         upper_bb = ma20 + (std20 * 2)
         lower_bb = ma20 - (std20 * 2)
 
+        # 1段目：メインチャート（画像3のようにローソク足または折れ線を綺麗に描画）
         if chart_type == "ローソク足":
             fig.add_trace(go.Candlestick(
                 x=dates, open=opens, high=highs, low=lows, close=closes,
@@ -214,15 +216,17 @@ with tab_trade:
         fig.add_trace(go.Scatter(x=pred_dates, y=normal_pred, mode='lines+markers', name='通常予測', line=dict(color='#ffeb3b', width=2, dash='dash')), row=1, col=1)
         fig.add_trace(go.Scatter(x=pred_dates, y=strong_pred, mode='lines+markers', name='強気予測', line=dict(color='#26a69a', width=2, dash='dash')), row=1, col=1)
 
-        volumes = np.random.randint(10, 100, size=60)
-        colors = ['#26a69a' if closes[i] >= opens[i] else '#ef5350' for i in range(60)]
-        fig.add_trace(go.Bar(x=dates, y=volumes, marker_color=colors, name='出来高', showlegend=False), row=2, col=1)
+        # 2段目：画像2に基づいたRSIサブチャート
+        rsi_vals = 50 + np.sin(np.linspace(0, 10, 60)) * 25
+        fig.add_trace(go.Scatter(x=dates, y=rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#ab47bc', width=1.5), showlegend=False), row=2, col=1)
+        fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=2, col=1)
+        fig.add_hline(y=30, line_dash="dash", line_color="#26a69a", row=2, col=1)
 
         fig.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff'),
-            height=480,
+            height=520,
             margin=dict(l=10, r=10, t=10, b=40),
             legend=dict(
                 orientation="h",
@@ -280,7 +284,7 @@ with tab_trade:
 
         st.markdown("""
         **1. テクニカル分析:**  
-        移動平均線(5MA/20MA)のゴールデンクロスが確認されており、短期的な上昇トレンドの初動段階にあると判断できます。
+        RSI(14)は適切な水準にあり、移動平均線のゴールデンクロスと合わせて強い買いシグナルを示唆しています。
         """)
 
 # 2. ポートフォリオタブ
@@ -311,7 +315,7 @@ with tab_strategy:
     with chat_container:
         st.markdown(f"📌 **システムメモ**: 現在選択中の `{selected_symbol}`（予測期間: {timeframe_str}）の情報をAIがリアルタイムで共有しています。")
         st.markdown("📊 **主席アナリストAI (マクロ)**: 指標発表前後のボラティリティに警戒が必要です。")
-        st.markdown(f"📈 **テクニカルAI**: {selected_symbol} の現在のローソク足形状の状態を注視しましょう。")
+        st.markdown(f"📈 **テクニカルAI**: {selected_symbol} のローソク足およびRSIの状態を注視しましょう。")
         st.markdown("🛡️ **リスク管理官AI**: ポートフォリオ全体の損切ラインを再確認してください。")
         st.markdown("👑 **チーフオーケストレーター**: 指標発表を控え、ポジションを抑えた慎重な立ち回りを推奨します。")
 
