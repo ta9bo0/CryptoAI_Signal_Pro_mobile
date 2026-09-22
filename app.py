@@ -31,7 +31,7 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    /* ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定） */
+    # ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定）
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #21262d !important;
     }
@@ -120,7 +120,6 @@ with st.container():
         with sub_col2:
             pred_unit = st.selectbox("単位", ["時間", "日", "週", "月", "年"], label_visibility="collapsed")
         
-        # 「間」の重複を防いだ自然な文字列
         timeframe_str = f"{pred_number}{pred_unit}"
         
         if pred_unit == "時間":
@@ -168,11 +167,12 @@ with tab_trade:
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
+        # RSIサブチャートを削除し、ローソク足/折れ線（行1）と出来高（行2）の2段構成に変更
         fig = make_subplots(
-            rows=3, cols=1, 
+            rows=2, cols=1, 
             shared_xaxes=True, 
             vertical_spacing=0.03,
-            row_heights=[0.6, 0.2, 0.2]
+            row_heights=[0.75, 0.25]
         )
         
         np.random.seed(len(selected_symbol) + int(current_price))
@@ -218,16 +218,11 @@ with tab_trade:
         colors = ['#26a69a' if closes[i] >= opens[i] else '#ef5350' for i in range(60)]
         fig.add_trace(go.Bar(x=dates, y=volumes, marker_color=colors, name='出来高', showlegend=False), row=2, col=1)
 
-        rsi_vals = 50 + np.sin(np.linspace(0, 10, 60)) * 25
-        fig.add_trace(go.Scatter(x=dates, y=rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#ab47bc', width=1.5), showlegend=False), row=3, col=1)
-        fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=3, col=1)
-        fig.add_hline(y=30, line_dash="dash", line_color="#26a69a", row=3, col=1)
-
         fig.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff'),
-            height=520,
+            height=480,
             margin=dict(l=10, r=10, t=10, b=40),
             legend=dict(
                 orientation="h",
@@ -261,7 +256,7 @@ with tab_trade:
 
         st.markdown("---")
 
-        # --- ✨ 画像2のブロック（超高精度3シナリオ価格＆確率予測）を上に配置 ---
+        # --- 超高精度3シナリオ価格＆確率予測 ---
         st.markdown(f"### 📊 超高精度3シナリオ価格＆確率予測（期間: {timeframe_str}）")
         weak_val = current_price * 0.90
         normal_val = current_price * 1.08
@@ -277,7 +272,7 @@ with tab_trade:
 
         st.markdown("---")
 
-        # --- ✨ 画像1のブロック（CEX上場可能性・ファンダメンタルズ）を下に配置 ---
+        # --- CEX上場可能性・ファンダメンタルズ ---
         st.markdown("### 🔵 CEX上場可能性: 大手CEX上場確率 [91.85%]")
         st.markdown("### 🚀 想定値上がり倍率: [2.15倍]")
         st.markdown("### 💡 上場予測の具体的中核・ファンダメンタルズ")
@@ -285,7 +280,7 @@ with tab_trade:
 
         st.markdown("""
         **1. テクニカル分析:**  
-        RSI(14)は69.66を示しており、強い買越しモメンタムが継続しています。5日移動平均線(5MA)が20日移動平均線(20MA)を上抜けるゴールデンクロスが確定しており、短期的な上昇トレンドの初動段階にあると判断できます。
+        移動平均線(5MA/20MA)のゴールデンクロスが確認されており、短期的な上昇トレンドの初動段階にあると判断できます。
         """)
 
 # 2. ポートフォリオタブ
@@ -316,7 +311,7 @@ with tab_strategy:
     with chat_container:
         st.markdown(f"📌 **システムメモ**: 現在選択中の `{selected_symbol}`（予測期間: {timeframe_str}）の情報をAIがリアルタイムで共有しています。")
         st.markdown("📊 **主席アナリストAI (マクロ)**: 指標発表前後のボラティリティに警戒が必要です。")
-        st.markdown(f"📈 **テクニカルAI**: {selected_symbol} の現在のローソク足形状とRSIの状態を注視しましょう。")
+        st.markdown(f"📈 **テクニカルAI**: {selected_symbol} の現在のローソク足形状の状態を注視しましょう。")
         st.markdown("🛡️ **リスク管理官AI**: ポートフォリオ全体の損切ラインを再確認してください。")
         st.markdown("👑 **チーフオーケストレーター**: 指標発表を控え、ポジションを抑えた慎重な立ち回りを推奨します。")
 
