@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# デスクトップ版と同等の重厚なダークテーマCSS
+# デスクトップ＆モバイル対応のダークテーマCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -143,7 +143,8 @@ else:
 
 # 1. シグナル＆チャートタブ
 with tab_trade:
-    col_chart, col_info = st.columns([1.3, 1])
+    # スマホでは縦並び、PCでは横並びに自動切り替えするカラム設定
+    col_chart, col_info = st.columns([1, 1], gap="large")
     
     with col_chart:
         st.subheader(f"{selected_symbol} - [{timeframe_tf}] Binance Japan")
@@ -207,7 +208,7 @@ with tab_trade:
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff'),
-            height=600,
+            height=500,
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
