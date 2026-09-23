@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# トレードビュー風のボタンスタイルおよびダークテーマCSS
+# セレクトボックスやポップアップを含めて完璧にダークテーマに統一するCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -31,7 +31,7 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    /* ドロップダウンポップアップの背景と文字色 */
+    # ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定）
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #21262d !important;
     }
@@ -109,7 +109,6 @@ with st.container():
             ["TAO/JPY", "BTC/JPY", "ETH/JPY", "SOL/JPY", "SUI/JPY", "PEPE/JPY"]
         )
     with ctrl_col2:
-        # 画像3のスタイルに合わせたセレクト
         chart_type = st.selectbox("チャート形式", ["ローソク足", "折れ線"])
         timeframe_tf = st.selectbox("時間足", ["1h", "4h", "12h", "1D", "1W", "1M", "1Y"])
         
@@ -168,7 +167,6 @@ with tab_trade:
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
-        # 画像1および画像2のご要望通り、「メインチャート（ローソク足/折れ線）」と「RSIサブチャート」の2つに厳選
         fig = make_subplots(
             rows=2, cols=1, 
             shared_xaxes=True, 
@@ -190,7 +188,6 @@ with tab_trade:
         upper_bb = ma20 + (std20 * 2)
         lower_bb = ma20 - (std20 * 2)
 
-        # 1段目：メインチャート（画像3のようにローソク足または折れ線を綺麗に描画）
         if chart_type == "ローソク足":
             fig.add_trace(go.Candlestick(
                 x=dates, open=opens, high=highs, low=lows, close=closes,
@@ -216,12 +213,12 @@ with tab_trade:
         fig.add_trace(go.Scatter(x=pred_dates, y=normal_pred, mode='lines+markers', name='通常予測', line=dict(color='#ffeb3b', width=2, dash='dash')), row=1, col=1)
         fig.add_trace(go.Scatter(x=pred_dates, y=strong_pred, mode='lines+markers', name='強気予測', line=dict(color='#26a69a', width=2, dash='dash')), row=1, col=1)
 
-        # 2段目：画像2に基づいたRSIサブチャート
         rsi_vals = 50 + np.sin(np.linspace(0, 10, 60)) * 25
         fig.add_trace(go.Scatter(x=dates, y=rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#ab47bc', width=1.5), showlegend=False), row=2, col=1)
         fig.add_hline(y=70, line_dash="dash", line_color="#ef5350", row=2, col=1)
         fig.add_hline(y=30, line_dash="dash", line_color="#26a69a", row=2, col=1)
 
+        # 凡例（legend）の文字色を純白（#ffffff）に設定
         fig.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
@@ -233,7 +230,8 @@ with tab_trade:
                 yanchor="top",
                 y=-0.15,
                 xanchor="center",
-                x=0.5
+                x=0.5,
+                font=dict(color='#ffffff', size=12)
             )
         )
         st.plotly_chart(fig, use_container_width=True)
