@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# デスクトップ版のダークテーマ・カラーバランスを再現するCSS
+# ドロップダウン展開時の選択肢文字色を黒、背景を白に修正したCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -33,16 +33,16 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    # ドロップダウンのポップアップ（選択肢一覧の背景と文字色を強制指定）
+    /* ドロップダウンのポップアップ（選択肢一覧の背景を白、文字色を黒に設定） */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #21262d !important;
+        background-color: #ffffff !important;
     }
     div[data-baseweb="popover"] div, div[data-baseweb="menu"] div, ul[data-baseweb="menu"] li, span {
-        color: #ffffff !important;
+        color: #000000 !important;
     }
     li[role="option"] {
-        background-color: #21262d !important;
-        color: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
     li[role="option"]:hover {
         background-color: #1f6feb !important;
@@ -274,7 +274,7 @@ with tab_trade:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- 実際の終値データから計算したリアルタイムRSIグラフを予測値の下に配置 ---
+        # --- 実データに基づくリアルタイムRSIグラフ ---
         st.markdown("<p style='font-size:13px; font-weight:bold; color:#b553d1; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
         fig_rsi = go.Figure()
         
