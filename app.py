@@ -7,30 +7,26 @@ from plotly.subplots import make_subplots
 import json
 import os
 
-# ページ設定
+# ページ設定（モバイル・PC両対応のレイアウト）
 st.set_page_config(
     page_title="CryptoAI Signal Pro",
     page_icon="📈",
     layout="wide"
 )
 
-# 視認性を最優先に考慮したCSS（ダーク背景での文字色、ドロップダウンの白背景と黒文字の明確な切り分け）
+# スマホ等の狭い画面でもレイアウトや文字が崩れず綺麗に表示されるレスポンシブCSS
 st.markdown("""
 <style>
-    /* アプリ全体のダーク背景と基本文字色：白 */
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     
-    /* 見出しや通常テキストをはっきりとした白に設定 */
     h1, h2, h3, h4, h5, h6, p, span, label, div, markdown {
         color: #ffffff !important;
     }
     
-    /* サイドバーのテキスト */
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
     
-    /* 入力フォーム・セレクトボックスの表示部 */
     input, select, div[data-baseweb="select"] > div {
         background-color: #21262d !important;
         color: #ffffff !important;
@@ -53,12 +49,12 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* ボタンのスタイル */
     .stButton button {
         background-color: #21262d;
         color: #ffffff;
         font-weight: 600;
         border: 1px solid #30363d;
+        width: 100%;
     }
     .stButton button:hover {
         background-color: #1f6feb;
@@ -66,11 +62,16 @@ st.markdown("""
         border-color: #1f6feb;
     }
 
-    /* タブのスタイル */
-    .stTabs [data-baseweb="tab-list"] { gap: 8px; }
-    .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #ffffff !important; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
+    .stTabs [data-baseweb="tab-list"] { gap: 6px; flex-wrap: wrap; }
+    .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #ffffff !important; border-radius: 6px; padding: 8px 14px; font-weight: 600; font-size: 13px; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
     div[data-testid="stMetricValue"] { color: #58a6ff; font-weight: 700; }
+
+    /* モバイル表示時の余白・カード調整 */
+    @media (max-width: 768px) {
+        .row-widget.stHorizontal { flex-direction: column; }
+        [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; margin-bottom: 10px; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -206,20 +207,20 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 
 # 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    # 4つの集計カード（文字の視認性を高めたデザイン）
+    # 4つの集計カード（スマホ対応のレスポンシブカラム）
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160;margin:6px 0;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#d0d0d0;font-size:11px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160;margin:4px 0;font-size:16px;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
     with c2:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>超高精度通常予測 達成確率</span><br><h3 style='color:#58a6ff;margin:6px 0;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#d0d0d0;font-size:11px;font-weight:bold;'>達成確率</span><br><h3 style='color:#58a6ff;margin:4px 0;font-size:16px;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
     with c3:
-        st.markdown(f"<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>Binance JPレート ➔ 通常ターゲット</span><br><h3 style='color:#ffdd57;margin:6px 0;font-size:14px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#d0d0d0;font-size:11px;font-weight:bold;'>ターゲット</span><br><h3 style='color:#ffdd57;margin:4px 0;font-size:13px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
     with c4:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>設定した予測期間</span><br><h3 style='color:#ffffff;margin:6px 0;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#d0d0d0;font-size:11px;font-weight:bold;'>予測期間</span><br><h3 style='color:#ffffff;margin:4px 0;font-size:16px;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
-    # チャートツールバー
+    # チャートツールバー（スマホで折り返ししやすいよう調整）
     tb_col1, tb_col2 = st.columns([1, 2])
     with tb_col1:
         chart_type = st.radio("形式", ["ローソク足", "折れ線"], horizontal=True, label_visibility="collapsed")
@@ -231,6 +232,7 @@ with tab_trade:
                 if st.button(tf, key=f"tf_{tf}", use_container_width=True):
                     st.session_state.timeframe = tf
 
+    # メインチャートと情報パネルのレスポンシブ配置（スマホでは自動縦並び）
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
@@ -274,11 +276,11 @@ with tab_trade:
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff', size=11),
-            height=380,
+            height=360,
             margin=dict(l=10, r=10, t=10, b=30),
             legend=dict(orientation="h", yanchor="top", y=-0.18, xanchor="center", x=0.5, font=dict(color='#ffffff', size=10))
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
         # --- 実データに基づくリアルタイムRSIグラフ ---
         st.markdown("<p style='font-size:13px; font-weight:bold; color:#d0b5ff; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
@@ -295,13 +297,13 @@ with tab_trade:
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
             font=dict(color='#ffffff', size=10),
-            height=160,
+            height=150,
             margin=dict(l=10, r=10, t=5, b=20),
             yaxis=dict(range=[0, 100], gridcolor='#333333'),
             xaxis=dict(gridcolor='#333333'),
             showlegend=False
         )
-        st.plotly_chart(fig_rsi, use_container_width=True)
+        st.plotly_chart(fig_rsi, use_container_width=True, config={'displayModeBar': False})
 
     with col_info:
         st.markdown("### 🔮 CEX上場可能性: 大手CEX上場確率 [91.85%]")
@@ -340,7 +342,7 @@ with tab_macro:
 # 4. 戦略会議室タブ
 with tab_strategy:
     st.subheader("💬 戦略会議室 (マルチAI対話)")
-    chat_container = st.container(height=380)
+    chat_container = st.container(height=360)
     with chat_container:
         for chat in st.session_state.chat_history:
             if chat["role"] == "system":
