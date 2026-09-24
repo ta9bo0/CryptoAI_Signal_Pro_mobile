@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# 視認性とコントラストを大幅に向上させたCSS
+# スマホ・PC共通で見やすさを最優先したCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
@@ -64,8 +64,8 @@ st.markdown("""
     .stTabs [data-baseweb="tab-list"] { gap: 6px; flex-wrap: wrap; }
     .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #ffffff !important; border-radius: 6px; padding: 8px 14px; font-weight: 600; font-size: 13px; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
-    div[data-testid="stMetricValue"] { color: #58a6ff; font-weight: 700; }
-
+    
+    /* モバイル最適化 */
     @media (max-width: 768px) {
         .row-widget.stHorizontal { flex-direction: column; }
         [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; margin-bottom: 10px; }
@@ -205,16 +205,16 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 
 # 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    # 4つの集計カード（文字色を純白・黄色に固定して視認性を確保）
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160 !important;margin:6px 0;font-size:16px;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
-    with c2:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>達成確率</span><br><h3 style='color:#58a6ff !important;margin:6px 0;font-size:16px;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>ターゲット</span><br><h3 style='color:#ffdd57 !important;margin:6px 0;font-size:13px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
-    with c4:
-        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>予測期間</span><br><h3 style='color:#ffffff !important;margin:6px 0;font-size:16px;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
+    # 4つの集計カード：スマホでも視認性が確実なStreamlit標準 st.metric を採用
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.metric(label="判定 (買い時/売り時)", value="🟢 買い時")
+    with m2:
+        st.metric(label="達成確率", value="62.35 %")
+    with m3:
+        st.metric(label="ターゲット", value=f"{fmt_price(target_price_val)}")
+    with m4:
+        st.metric(label="予測期間", value="3日間")
 
     st.markdown("---")
 
@@ -278,7 +278,7 @@ with tab_trade:
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
         # --- リアルタイムRSIグラフ ---
-        st.markdown("<p style='font-size:13px; font-weight:bold; color:#ffffff !important; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
+        st.markdown("### 📉 RSI (買われすぎ・売られすぎ指標)")
         fig_rsi = go.Figure()
         
         real_rsi_vals = calculate_rsi(closes, period=14)
