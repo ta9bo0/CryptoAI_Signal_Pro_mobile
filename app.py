@@ -14,13 +14,12 @@ st.set_page_config(
     layout="wide"
 )
 
-# 全てのテキストおよびUI部品の文字色を鮮明に保つための完全版CSS
+# 視認性とコントラストを大幅に向上させたCSS
 st.markdown("""
 <style>
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     
-    /* すべての文字をはっきりとした白に指定 */
     h1, h2, h3, h4, h5, h6, p, span, label, div, markdown, .stMarkdown, .stText {
         color: #ffffff !important;
     }
@@ -34,7 +33,6 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    /* ドロップダウンのポップアップ（選択肢一覧）：白背景に黒文字で確実に視認性を確保 */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #ffffff !important;
     }
@@ -207,16 +205,16 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 
 # 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    # 4つの集計カード
+    # 4つの集計カード（文字色を純白・黄色に固定して視認性を確保）
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff;font-size:11px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160;margin:4px 0;font-size:16px;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160 !important;margin:6px 0;font-size:16px;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
     with c2:
-        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff;font-size:11px;font-weight:bold;'>達成確率</span><br><h3 style='color:#58a6ff;margin:4px 0;font-size:16px;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>達成確率</span><br><h3 style='color:#58a6ff !important;margin:6px 0;font-size:16px;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
     with c3:
-        st.markdown(f"<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff;font-size:11px;font-weight:bold;'>ターゲット</span><br><h3 style='color:#ffdd57;margin:4px 0;font-size:13px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>ターゲット</span><br><h3 style='color:#ffdd57 !important;margin:6px 0;font-size:13px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
     with c4:
-        st.markdown("<div style='background:#1f242d;padding:10px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff;font-size:11px;font-weight:bold;'>予測期間</span><br><h3 style='color:#ffffff;margin:4px 0;font-size:16px;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;margin-bottom:6px;'><span style='color:#ffffff !important;font-size:12px;font-weight:bold;'>予測期間</span><br><h3 style='color:#ffffff !important;margin:6px 0;font-size:16px;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -235,7 +233,6 @@ with tab_trade:
     col_chart, col_info = st.columns([1.3, 1], gap="large")
     
     with col_chart:
-        # メインの予測・ローソク足チャート
         fig = go.Figure()
         
         np.random.seed(len(selected_symbol) + int(current_price))
@@ -281,7 +278,7 @@ with tab_trade:
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
         # --- リアルタイムRSIグラフ ---
-        st.markdown("<p style='font-size:13px; font-weight:bold; color:#ffffff; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:13px; font-weight:bold; color:#ffffff !important; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
         fig_rsi = go.Figure()
         
         real_rsi_vals = calculate_rsi(closes, period=14)
