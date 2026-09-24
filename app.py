@@ -14,27 +14,30 @@ st.set_page_config(
     layout="wide"
 )
 
-# 背景の明暗に応じて文字色を自動的かつ正確に切り替えるCSS
+# 視認性を最優先に考慮したCSS（ダーク背景での文字色、ドロップダウンの白背景と黒文字の明確な切り分け）
 st.markdown("""
 <style>
-    /* 黒背景のエリアの基本文字色：白 */
+    /* アプリ全体のダーク背景と基本文字色：白 */
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     
+    /* 見出しや通常テキストをはっきりとした白に設定 */
     h1, h2, h3, h4, h5, h6, p, span, label, div, markdown {
         color: #ffffff !important;
     }
     
+    /* サイドバーのテキスト */
     [data-testid="stSidebar"] { background-color: #161b22; color: #ffffff; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown p { color: #ffffff !important; }
     
+    /* 入力フォーム・セレクトボックスの表示部 */
     input, select, div[data-baseweb="select"] > div {
         background-color: #21262d !important;
         color: #ffffff !important;
         border-color: #30363d !important;
     }
     
-    /* 白背景になるドロップダウンのポップアップ（選択肢一覧）：背景を白、文字色を黒に固定 */
+    /* ドロップダウンのポップアップ（選択肢一覧）：白背景に黒文字で確実に視認性を確保 */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #ffffff !important;
     }
@@ -50,6 +53,7 @@ st.markdown("""
         color: #ffffff !important;
     }
     
+    /* ボタンのスタイル */
     .stButton button {
         background-color: #21262d;
         color: #ffffff;
@@ -62,6 +66,7 @@ st.markdown("""
         border-color: #1f6feb;
     }
 
+    /* タブのスタイル */
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: #21262d; color: #ffffff !important; border-radius: 6px; padding: 10px 18px; font-weight: 600; }
     .stTabs [aria-selected="true"] { background-color: #1f6feb !important; color: #ffffff !important; }
@@ -201,16 +206,16 @@ tab_trade, tab_portfolio, tab_macro, tab_strategy = st.tabs([
 
 # 1. 総合シグナル＆チャートタブ
 with tab_trade:
-    # 4つの集計カード
+    # 4つの集計カード（文字の視認性を高めたデザイン）
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown("<div style='background:#21262d;padding:12px;border-radius:8px;text-align:center;'><span style='color:#aaaaaa;font-size:12px;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160;margin:4px 0;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>判定 (買い時/売り時)</span><br><h3 style='color:#23d160;margin:6px 0;font-weight:bold;'>🟢 買い時</h3></div>", unsafe_allow_html=True)
     with c2:
-        st.markdown("<div style='background:#21262d;padding:12px;border-radius:8px;text-align:center;'><span style='color:#aaaaaa;font-size:12px;'>超高精度通常予測 達成確率</span><br><h3 style='color:#58a6ff;margin:4px 0;'>62.35 %</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>超高精度通常予測 達成確率</span><br><h3 style='color:#58a6ff;margin:6px 0;font-weight:bold;'>62.35 %</h3></div>", unsafe_allow_html=True)
     with c3:
-        st.markdown(f"<div style='background:#21262d;padding:12px;border-radius:8px;text-align:center;'><span style='color:#aaaaaa;font-size:12px;'>Binance JPレート ➔ 通常ターゲット</span><br><h3 style='color:#ffdd57;margin:4px 0;font-size:15px;'>{fmt_price(current_price)} ➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>Binance JPレート ➔ 通常ターゲット</span><br><h3 style='color:#ffdd57;margin:6px 0;font-size:14px;font-weight:bold;'>{fmt_price(current_price)}<br>➔ {fmt_price(target_price_val)}</h3></div>", unsafe_allow_html=True)
     with c4:
-        st.markdown("<div style='background:#21262d;padding:12px;border-radius:8px;text-align:center;'><span style='color:#aaaaaa;font-size:12px;'>設定した予測期間</span><br><h3 style='color:#ffffff;margin:4px 0;'>3日間</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background:#1f242d;padding:12px;border-radius:8px;text-align:center;border:1px solid #30363d;'><span style='color:#d0d0d0;font-size:12px;font-weight:bold;'>設定した予測期間</span><br><h3 style='color:#ffffff;margin:6px 0;font-weight:bold;'>3日間</h3></div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -276,16 +281,16 @@ with tab_trade:
         st.plotly_chart(fig, use_container_width=True)
 
         # --- 実データに基づくリアルタイムRSIグラフ ---
-        st.markdown("<p style='font-size:13px; font-weight:bold; color:#b553d1; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:13px; font-weight:bold; color:#d0b5ff; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
         fig_rsi = go.Figure()
         
         real_rsi_vals = calculate_rsi(closes, period=14)
         
         fig_rsi.add_trace(go.Scatter(
-            y=real_rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#b553d1', width=1.8)
+            y=real_rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#d0b5ff', width=1.8)
         ))
-        fig_rsi.add_hline(y=70, line_dash="dash", line_color="#ff3860", annotation_text="過熱圏 (70)", annotation_position="top left", annotation_font_color="#ff3860")
-        fig_rsi.add_hline(y=30, line_dash="dash", line_color="#23d160", annotation_text="底値圏 (30)", annotation_position="bottom left", annotation_font_color="#23d160")
+        fig_rsi.add_hline(y=70, line_dash="dash", line_color="#ff5c7c", annotation_text="過熱圏 (70)", annotation_position="top left", annotation_font_color="#ff5c7c")
+        fig_rsi.add_hline(y=30, line_dash="dash", line_color="#2ecc71", annotation_text="底値圏 (30)", annotation_position="bottom left", annotation_font_color="#2ecc71")
         fig_rsi.update_layout(
             paper_bgcolor='#0e1117',
             plot_bgcolor='#0e1117',
@@ -327,9 +332,9 @@ with tab_portfolio:
 with tab_macro:
     st.subheader("📅 直近の主要経済指標スケジュール ＆ 市場インパクト")
     st.markdown("""
-    - **2026-09-24 (木) 21:30**: 🇺🇸 米・実質GDP改定値 (コンセンサス: +2.8%) - 上振れ時 ➔ BTC高
-    - **2026-10-02 (金) 21:30**: 🇺🇸 米・雇用統計 (コンセンサス: +16.5万人) - 雇用増 ➔ 利下げ牽制
-    - **2026-10-14 (水) 21:30**: 🇺🇸 米・消費者物価指数 CPI (コンセンサス: 3.1%) - 上振れ時 ➔ BTC下落
+    - **2026-09-24 (木) 21:30**: 🇺🇸 米・実質GDP改定値 (コンセンサス: +2.8%) - 上振れ時 ➔ BTC高[cite: 13]
+    - **2026-10-02 (金) 21:30**: 🇺🇸 米・雇用統計 (コンセンサス: +16.5万人) - 雇用増 ➔ 利下げ牽制[cite: 13]
+    - **2026-10-14 (水) 21:30**: 🇺🇸 米・消費者物価指数 CPI (コンセンサス: 3.1%) - 上振れ時 ➔ BTC下落[cite: 13]
     """)
 
 # 4. 戦略会議室タブ
