@@ -14,9 +14,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# ドロップダウン展開時の選択肢文字色を黒、背景を白に修正したCSS
+# 背景の明暗に応じて文字色を自動的かつ正確に切り替えるCSS
 st.markdown("""
 <style>
+    /* 黒背景のエリアの基本文字色：白 */
     .stApp { background-color: #0e1117; color: #ffffff; }
     .main { background-color: #0e1117; color: #ffffff; }
     
@@ -33,7 +34,7 @@ st.markdown("""
         border-color: #30363d !important;
     }
     
-    /* ドロップダウンのポップアップ（選択肢一覧の背景を白、文字色を黒に設定） */
+    /* 白背景になるドロップダウンのポップアップ（選択肢一覧）：背景を白、文字色を黒に固定 */
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"], div[role="listbox"] {
         background-color: #ffffff !important;
     }
@@ -350,5 +351,5 @@ with tab_strategy:
     if user_query:
         st.session_state.chat_history.append({"role": "user", "text": user_query})
         st.session_state.chat_history.append({"role": "analyst", "text": f"【アナリスト見解】{selected_symbol}のモメンタムは良好です。トレンド継続を狙いましょう。"})
-        st.session_state.chat_history.append({"role": "risk", "text": "【リスク管理見解】ボラティリティに備え、必ず損切ライン（SL）と資金管理を厳守してください。"})
+        st.session_state.chat_history.append({"role": "risk", "text": f"【リスク管理見解】ボラティリティに備え、必ず損切ライン（SL）と資金管理を厳守してください。"})
         st.rerun()
