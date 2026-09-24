@@ -111,6 +111,24 @@ def get_crypto_price(symbol_key):
         }
         return fallback_prices.get(symbol_key, 1000000.0)
 
+# 本格的なRSI（14）計算関数
+def calculate_rsi(closes, period=14):
+    closes_np = np.array(closes)
+    if len(closes_np) < period + 1:
+        return np.full_like(closes_np, 50.0)
+    deltas = np.diff(closes_np)
+    seed = deltas[:period]
+    up = seed[seed >= 0].sum() / period if len(seed[seed >= 0]) > 0 else 0.001
+    down = -seed[seed < 0].sum() / period if len(seed[seed < 0]) > 0 else 0.001
+    rsi = np.zeros_like(closes_np)
+    rsi[:period] = 100.0 - (100.0 / (1.0 + (up / (down + 1e-9))))
+    for i in range(period, len(closes_np)):
+        delta = deltas[i - 1]
+        up = (up * (period - 1) + (delta if delta > 0 else 0.0)) / period
+        down = (down * (period - 1) + (-delta if delta < 0 else 0.0)) / period
+        rsi[i] = 100.0 - (100.0 / (1.0 + (up / (down + 1e-9))))
+    return rsi
+
 # セッション状態の初期化
 if 'selected_symbol' not in st.session_state:
     st.session_state.selected_symbol = 'BTC/JPY'
@@ -256,12 +274,14 @@ with tab_trade:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # --- ご要望の「買われすぎ・売られすぎ（RSI 70/30）」専用グラフを予測値の下に配置 ---
-        st.markdown("<p style='font-size:13px; font-weight:bold; color:#b553d1; margin-bottom:2px;'>📉 RSI (買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
+        # --- 実際の終値データから計算したリアルタイムRSIグラフを予測値の下に配置 ---
+        st.markdown("<p style='font-size:13px; font-weight:bold; color:#b553d1; margin-bottom:2px;'>📉 RSI (実データに基づく買われすぎ・売られすぎ指標)</p>", unsafe_allow_html=True)
         fig_rsi = go.Figure()
-        rsi_vals = 50 + np.sin(np.linspace(0, 10, 60)) * 25
+        
+        real_rsi_vals = calculate_rsi(closes, period=14)
+        
         fig_rsi.add_trace(go.Scatter(
-            y=rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#b553d1', width=1.8)
+            y=real_rsi_vals, mode='lines', name='RSI(14)', line=dict(color='#b553d1', width=1.8)
         ))
         fig_rsi.add_hline(y=70, line_dash="dash", line_color="#ff3860", annotation_text="過熱圏 (70)", annotation_position="top left", annotation_font_color="#ff3860")
         fig_rsi.add_hline(y=30, line_dash="dash", line_color="#23d160", annotation_text="底値圏 (30)", annotation_position="bottom left", annotation_font_color="#23d160")
